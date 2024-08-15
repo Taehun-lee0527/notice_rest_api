@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface NoticeService {
     //조회
-    NoticeSearchResponse getNoticeList(NoticeSearchRequest noticeSearchRequest) throws Exception;
+    NoticeSearchResponse getNoticeList(NoticeSearchRequest noticeSearchRequest);
 
     //상세조회
     NoticeDetailResponse getNotice(int noticeNo) throws Exception;

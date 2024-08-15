@@ -1,6 +1,6 @@
 package com.api.user.service.impl;
 
-import com.api.user.entity.UserEntity;
+import com.api.user.entity.AccountEntity;
 import com.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,16 +19,16 @@ public class CustomUserDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
-        Optional<UserEntity> userOptional = userRepository.findByLoginId(loginId);
+        Optional<AccountEntity> userOptional = userRepository.findByLoginId(loginId);
 
-        UserEntity userEntity = userOptional.orElseThrow(() ->
+        AccountEntity accountEntity = userOptional.orElseThrow(() ->
                 new UsernameNotFoundException("User not found with username: " + loginId));
 
         return new org.springframework.security.core.userdetails.User(
-                userEntity.getUsername(),
-                userEntity.getPassword(),
+                accountEntity.getUsername(),
+                accountEntity.getPassword(),
 //                passwordEncoder.encode(userEntity.getPassword()),
-                userEntity.getAuthorities() // 권한 설정
+                accountEntity.getAuthorities() // 권한 설정
         );
     }
 }

@@ -1,114 +1,175 @@
 package com.api.notice;
 
+import com.api.notice.entity.NoticeAttachmentEntity;
 import com.api.notice.entity.NoticeEntity;
+import com.api.notice.repository.NoticeAttachmentRepository;
 import com.api.notice.repository.NoticeRepository;
+import com.api.notice.request.NoticeSaveRequest;
+import com.api.notice.request.NoticeSearchRequest;
 import com.api.notice.response.NoticeDetailResponse;
+import com.api.notice.response.NoticeSearchResponse;
 import com.api.notice.service.impl.NoticeServiceImpl;
-import com.api.user.entity.UserEntity;
-import com.api.user.repository.UserRepository;
-import com.api.user.service.impl.UserServiceImpl;
-import org.junit.jupiter.api.AfterEach;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-@Transactional
-@SpringBootTest
-//@ExtendWith(MockitoExtension.class)
 class NoticeServiceTest {
 
 
-    private static int NOTICE_NO;
-    private final String TITLE = "panda";
-    private final String CONTENT = "bear";
     private final String LOGINID = "test";
-    private final String PASSWORD = "123";
 
-    @Mock
-    private UserServiceImpl userService;
     @InjectMocks
     NoticeServiceImpl noticeService;
     @Mock
-    UserRepository userRepository;
-    @Mock
     NoticeRepository noticeRepository;
-    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    private NoticeEntity noticeEntity;
+    @Mock
+    NoticeAttachmentRepository noticeAttachmentRepository;
 
     @BeforeEach
-    void init() throws Exception {
+    void init() {
+
         MockitoAnnotations.openMocks(this);
+        List<NoticeEntity> noticeEntityList = new ArrayList<>();
 
-        UserEntity user = UserEntity.builder()
-                .loginId(LOGINID)
-                .password(passwordEncoder.encode(PASSWORD))
-                .build();
-//        userService.join(user);
-
-        noticeEntity = new NoticeEntity();
-        noticeEntity.setNoticeNo(99);
-        noticeEntity.setTitle(TITLE);
-        noticeEntity.setContent(CONTENT);
+        NoticeEntity noticeEntity = new NoticeEntity();
+        noticeEntity.setNoticeNo(100);
+        noticeEntity.setTitle("test_title1");
+        noticeEntity.setContent("test_content1");
         noticeEntity.setCreator(LOGINID);
         noticeEntity.setNoticeStartDate(LocalDateTime.now());
         noticeEntity.setNoticeEndDate(LocalDateTime.of(2022, 12, 31, 3, 2, 4));
-//        notice = noticeRepository.save(notice);
-//        when(noticeRepository.save(notice)).thenReturn(notice);
+        noticeEntity.setCreatedAt(LocalDateTime.now());
+        noticeEntityList.add(noticeEntity);
 
-//        NOTICE_NO=notice.getNoticeNo();
+        when(noticeRepository.findById(100)).thenReturn(Optional.of(noticeEntity));
 
-//        when(noticeRepository.save(notice)).thenReturn(notice);
-        NOTICE_NO = noticeEntity.getNoticeNo();
+        NoticeAttachmentEntity noticeAttachmentEntity = new NoticeAttachmentEntity();
+        noticeAttachmentEntity.setNoticeAttachmentNo(1);
+        noticeAttachmentEntity.setNoticeNo(100);
+        noticeAttachmentEntity.setFileName("test.jpg");
+        noticeAttachmentEntity.setFilePath("/user/home/test.jpg");
+        noticeAttachmentEntity.setFileSize(100L);
+        noticeAttachmentEntity.setCreator(LOGINID);
+        noticeAttachmentEntity.setCreatedAt(LocalDateTime.now());
 
-//        List<NoticeEntity> noticeList = new ArrayList<>();
-//        noticeList.add(notice);
-//
-//        Pagination pagination = new Pagination();
-//        pagination.setPage(1);
-//        pagination.setTotalCount(1);
-//
-//        ToastResponseTemplate<NoticeEntity> toastResponseTemplate= new ToastResponseTemplate<>();
-//        toastResponseTemplate.setContents(noticeList);
-//        toastResponseTemplate.setPagination(pagination);
-//        NoticeSearchResponse response = new NoticeSearchResponse();
-//        response.setResult(true);
-//        response.setData(toastResponseTemplate);
-//        NoticeSearchRequest noticeSearchRequest = new NoticeSearchRequest();
-//        noticeSearchRequest.setPage(1);
-//        noticeSearchRequest.setPerPage(20);
-//        when(noticeService.getNoticeList(noticeSearchRequest)).thenReturn(response);
+        List<NoticeAttachmentEntity> noticeAttachmentEntityList = new ArrayList<>();
+        noticeAttachmentEntityList.add(noticeAttachmentEntity);
+
+        when(noticeAttachmentRepository.findAllByNoticeNo(100)).thenReturn(noticeAttachmentEntityList);
+
+        NoticeEntity noticeEntity2 = new NoticeEntity();
+        noticeEntity2.setNoticeNo(101);
+        noticeEntity2.setTitle("test_title2");
+        noticeEntity2.setContent("test_content2");
+        noticeEntity2.setCreator(LOGINID);
+        noticeEntity2.setNoticeStartDate(LocalDateTime.now());
+        noticeEntity2.setNoticeEndDate(LocalDateTime.of(2022, 12, 31, 3, 2, 4));
+        noticeEntityList.add(noticeEntity2);
+
+        // Mocking repository method
+        when(noticeRepository.searchNotice(any(NoticeSearchRequest.class)))
+                .thenReturn(NoticeSearchResponse.of(true, noticeEntityList, 1, 2));
     }
+    @Test
+    @DisplayName("공지사항 목록 조회")
+    void getNotices() {
+        NoticeSearchRequest noticeSearchRequest = new NoticeSearchRequest();
+        noticeSearchRequest.setPerPage(20);
+        noticeSearchRequest.setPage(1);
 
-    @AfterEach
-    void tearDown() {
-        noticeRepository.deleteAll();
+        NoticeSearchResponse response = noticeService.getNoticeList(noticeSearchRequest);
+
+        assertNotNull(response, "Response should not be null");
+        assertNotNull(response.getData(), "Data should not be null");
+        assertEquals(2, response.getData().getContents().size(), "There should be 2 notices");
     }
 
     @Test
-    @DisplayName("게시글 다건 조회")
-    void getNotices() throws Exception {
-        when(noticeRepository.findById(1)).thenReturn(Optional.of(noticeEntity));
+    @DisplayName("공지사항 단건 조회")
+    void getNotice() throws Exception {
+        NoticeDetailResponse noticeDetailResponse = noticeService.getNotice(100);
 
-        NoticeDetailResponse response = noticeService.getNotice(99);
-//        NoticeDetailResponse noticeDetailResponse = noticeService.getNotice(NOTICE_NO);
-//
-//        NoticeSearchRequest noticeSearchRequest = new NoticeSearchRequest();
-//        noticeSearchRequest.setPage(1);
-//        noticeSearchRequest.setPerPage(20);
-//        NoticeSearchResponse notices = noticeService.getNoticeList(noticeSearchRequest);
-//        assertThat(notices.getData().getPagination().getTotalCount()).isEqualTo(1);
+        assertNotNull(noticeDetailResponse, "Response should not be null");
+    }
+
+    @Test
+    @DisplayName("공지사항 단건 조회 - 공지사항 없음")
+    void getNotice_notFound() {
+        when(noticeRepository.findById(999)).thenThrow(new EntityNotFoundException("존재하지 않는 공지사항입니다."));
+
+        EntityNotFoundException thrownException = assertThrows(EntityNotFoundException.class, () -> {
+            // This line should throw the exception
+            noticeService.getNotice(999);
+        });
+
+        System.out.println("Exception message: " + thrownException.getMessage());
+    }
+
+    @Test
+    @DisplayName("공지사항 추가")
+    void create() throws Exception {
+        NoticeSaveRequest noticeSaveRequest = new NoticeSaveRequest();
+        noticeSaveRequest.setNoticeNo(102);
+        noticeSaveRequest.setTitle("test_title3");
+        noticeSaveRequest.setContent("test_content3");
+        noticeSaveRequest.setNoticeStartDate(LocalDateTime.now());
+        noticeSaveRequest.setNoticeEndDate(LocalDateTime.of(2031, 12, 22, 3, 4, 5));
+
+        when(noticeRepository.createNotice(any(NoticeSaveRequest.class))).thenReturn(102);
+        int noticeNo = noticeService.createNotice(noticeSaveRequest);
+
+        assertThat(noticeNo).isEqualTo(102);
+    }
+
+    @Test
+    @DisplayName("공지사항 수정")
+    void edit() throws Exception {
+        NoticeSaveRequest noticeSaveRequest = new NoticeSaveRequest();
+        noticeSaveRequest.setNoticeNo(100);
+        noticeSaveRequest.setTitle("updated_title1");
+        noticeSaveRequest.setContent("updated_content1");
+        noticeSaveRequest.setNoticeStartDate(LocalDateTime.now());
+        noticeSaveRequest.setNoticeEndDate(LocalDateTime.of(2031, 12, 22, 3, 4, 5));
+
+        // Mocking repository method
+        doNothing().when(noticeRepository).updateNotice(noticeSaveRequest);
+
+        // When
+        noticeService.updateNotice(noticeSaveRequest);
+
+        // Then
+        verify(noticeRepository, times(1)).updateNotice(noticeSaveRequest);
+
+        verifyNoMoreInteractions(noticeRepository);
+    }
+
+    @Test
+    @DisplayName("공지사항 삭제")
+    void delete() throws Exception {
+        List<Integer> noticeNoList = new ArrayList<>();
+        noticeNoList.add(100);
+
+        doNothing().when(noticeRepository).deleteAllById(noticeNoList);
+
+        noticeService.deleteNotices(noticeNoList);
+
+        verify(noticeRepository, times(1)).deleteAllById(noticeNoList);
+
+        verifyNoMoreInteractions(noticeRepository);
     }
 }

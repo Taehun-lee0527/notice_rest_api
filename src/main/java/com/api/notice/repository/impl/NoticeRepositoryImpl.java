@@ -30,7 +30,7 @@ public class NoticeRepositoryImpl extends QuerydslRepositorySupport implements C
     }
 
     @Override
-    public NoticeSearchResponse searchNotice(NoticeSearchRequest noticeSearchRequest) throws Exception {
+    public NoticeSearchResponse searchNotice(NoticeSearchRequest noticeSearchRequest) {
         QNoticeEntity qNoticeEntity = QNoticeEntity.noticeEntity;
         BooleanBuilder builder = new BooleanBuilder();
 

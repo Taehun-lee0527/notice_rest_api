@@ -5,7 +5,7 @@ import com.api.notice.request.NoticeSearchRequest;
 import com.api.notice.response.NoticeSearchResponse;
 
 public interface CustomNoticeRepository {
-    NoticeSearchResponse searchNotice(NoticeSearchRequest noticeSearchRequest) throws Exception;
+    NoticeSearchResponse searchNotice(NoticeSearchRequest noticeSearchRequest);
 
     int createNotice(NoticeSaveRequest noticeSaveRequest) throws Exception;
 

@@ -20,8 +20,8 @@ import java.util.Collections;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "user")
-public class UserEntity implements UserDetails {
+@Table(name = "account")
+public class AccountEntity implements UserDetails {
 
     @Id
     @Column(name="login_id")
@@ -57,7 +57,7 @@ public class UserEntity implements UserDetails {
     }
 
     @Builder
-    public UserEntity(String loginId, String password){
+    public AccountEntity(String loginId, String password){
         this.loginId = loginId;
         this.password = password;
     }

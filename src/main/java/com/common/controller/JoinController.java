@@ -1,6 +1,6 @@
 package com.common.controller;
 
-import com.api.user.entity.UserEntity;
+import com.api.user.entity.AccountEntity;
 import com.api.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,12 +16,12 @@ public class JoinController {
     //회원가입
     @PostMapping("/api/join")
     public ModelAndView join(
-            UserEntity userEntity,
+            AccountEntity accountEntity,
             RedirectAttributes redirectAttributes
     ) {
         ModelAndView modelAndView = new ModelAndView();
         try{
-            userService.join(userEntity);
+            userService.join(accountEntity);
             redirectAttributes.addFlashAttribute("message", "회원가입 성공");
             modelAndView.setViewName("redirect:/login?success");
         } catch (IllegalArgumentException e){

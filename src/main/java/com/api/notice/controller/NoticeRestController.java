@@ -29,7 +29,7 @@ public class NoticeRestController {
     @ResponseBody
     public NoticeSearchResponse getNoticeList(
             @ModelAttribute NoticeSearchRequest noticeSearchRequest
-    ) throws Exception {
+    ) {
         return noticeService.getNoticeList(noticeSearchRequest);
     }
 
@@ -59,8 +59,8 @@ public class NoticeRestController {
         noticeSaveRequest.setCreator(creator);
         noticeSaveRequest.setTitle(title);
         noticeSaveRequest.setContent(content);
-        noticeSaveRequest.setNoticeStartDate(LocalDateTime.parse(noticeStartDate));
-        noticeSaveRequest.setNoticeEndDate(LocalDateTime.parse(noticeEndDate));
+        if(StringUtils.isNotEmpty(noticeStartDate)) noticeSaveRequest.setNoticeStartDate(LocalDateTime.parse(noticeStartDate));
+        if(StringUtils.isNotEmpty(noticeEndDate)) noticeSaveRequest.setNoticeEndDate(LocalDateTime.parse(noticeEndDate));
         noticeSaveRequest.setAttachmentList(attachmentList);
         return noticeService.createNotice(noticeSaveRequest);
     }
@@ -80,8 +80,8 @@ public class NoticeRestController {
         noticeSaveRequest.setNoticeNo(noticeNo);
         noticeSaveRequest.setTitle(title);
         noticeSaveRequest.setContent(content);
-        noticeSaveRequest.setNoticeStartDate(LocalDateTime.parse(noticeStartDate));
-        noticeSaveRequest.setNoticeEndDate(LocalDateTime.parse(noticeEndDate));
+        if(StringUtils.isNotEmpty(noticeStartDate)) noticeSaveRequest.setNoticeStartDate(LocalDateTime.parse(noticeStartDate));
+        if(StringUtils.isNotEmpty(noticeEndDate)) noticeSaveRequest.setNoticeEndDate(LocalDateTime.parse(noticeEndDate));
         noticeSaveRequest.setCreator(updater);
         noticeSaveRequest.setUpdater(updater);
         noticeSaveRequest.setAttachmentList(attachmentList);

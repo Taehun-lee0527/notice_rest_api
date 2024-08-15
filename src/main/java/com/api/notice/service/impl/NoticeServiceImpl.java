@@ -13,6 +13,7 @@ import com.common.service.FileService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -35,8 +36,8 @@ public class NoticeServiceImpl implements NoticeService {
     private static final Path UPLOAD_FILE_PATH = Paths.get(System.getProperty("user.home"), "uploadFile").toAbsolutePath().normalize();
 
     @Override
-    @Cacheable("notice-list")
-    public NoticeSearchResponse getNoticeList(NoticeSearchRequest noticeSearchRequest) throws Exception {
+    @Cacheable(value = "noticeList", key = "#noticeSearchRequest.searchType + '-' +#noticeSearchRequest.searchText + '-' +#noticeSearchRequest.page + '-' + #noticeSearchRequest.perPage")
+    public NoticeSearchResponse getNoticeList(NoticeSearchRequest noticeSearchRequest) {
         return noticeRepository.searchNotice(noticeSearchRequest);
     }
 
@@ -51,6 +52,7 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "noticeList", allEntries = true)
     public int createNotice(NoticeSaveRequest noticeSaveRequest) throws Exception {
         int noticeNo = noticeRepository.createNotice(noticeSaveRequest);
         if(!ObjectUtils.isEmpty(noticeSaveRequest.getAttachmentList())){
@@ -61,6 +63,7 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "noticeList", allEntries = true)
     public void updateNotice(NoticeSaveRequest noticeSaveRequest) throws Exception {
         noticeRepository.updateNotice(noticeSaveRequest);
         if(!ObjectUtils.isEmpty(noticeSaveRequest.getAttachmentList())){
@@ -81,12 +84,14 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "noticeList", allEntries = true)
     public void deleteNotices(List<Integer> noticeNoList) throws Exception {
         noticeRepository.deleteAllById(noticeNoList);
     }
 
     @Override
     @Transactional
+    @CacheEvict(value = "noticeList", allEntries = true)
     public void increaseViewCount(int noticeNo) throws Exception {
         try{
             noticeRepository.increaseViewCount(noticeNo);
@@ -124,6 +129,5 @@ public class NoticeServiceImpl implements NoticeService {
                     }
                 })
                 .forEach(noticeAttachmentRepository::save);
-        ;
     }
 }

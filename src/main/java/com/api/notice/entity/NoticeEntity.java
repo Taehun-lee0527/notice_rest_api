@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class NoticeEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="notice_no")
     private int noticeNo;
 
