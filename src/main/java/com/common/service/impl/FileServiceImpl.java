@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -30,6 +31,15 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public void deleteFile(String filePath) throws Exception {
+        Path path = Paths.get(filePath);
 
+        if (Files.exists(path)) {
+            try {
+                // 파일 삭제
+                Files.delete(path);
+            } catch (IOException e) {
+                throw new IOException("Failed to delete : " + e.getMessage());
+            }
+        }
     }
 }

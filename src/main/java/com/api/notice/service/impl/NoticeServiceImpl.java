@@ -86,6 +86,17 @@ public class NoticeServiceImpl implements NoticeService {
     @Transactional
     @CacheEvict(value = "noticeList", allEntries = true)
     public void deleteNotices(List<Integer> noticeNoList) throws Exception {
+        List<NoticeAttachmentEntity> noticeAttachmentEntityList = noticeAttachmentRepository.findAllByNoticeNoList(noticeNoList);
+        if(!ObjectUtils.isEmpty(noticeAttachmentEntityList)){
+            noticeAttachmentEntityList.forEach(noticeAttachmentEntity -> {
+                try {
+                    fileService.deleteFile(noticeAttachmentEntity.getFilePath());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
         noticeRepository.deleteAllById(noticeNoList);
     }
 

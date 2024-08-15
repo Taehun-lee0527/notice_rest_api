@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class NoticeServiceTest {
+class NoticeServiceUnitTest {
 
 
     private final String LOGIN_ID = "test";

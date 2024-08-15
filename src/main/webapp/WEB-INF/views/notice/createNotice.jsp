@@ -114,34 +114,37 @@
 
         // 파일 선택 시 파일 목록 업데이트
         $('#fileInput').on('change', function(event) {
-            let files = event.target.files;
-            for (let i = 0; i < files.length; i++) {
-                if (!filesToUpload.find(f => f.name === files[i].name)) { // 중복 파일 체크
-                    filesToUpload.push(files[i]);
-
-                    let fileItem = $('<div>').addClass('file-item');
-                    let fileName = $('<span>').addClass('ms-2').text(files[i].name);
-                    let deleteButton = $('<button>').addClass('btn btn-outline-danger btn-sm').text("delete");
-
-                    fileItem.append(deleteButton).append(fileName);
-                    $('#fileList').append(fileItem);
-                }
+            let files = $('#fileInput')[0].files;
+            if (files.length === 0) {
+                alert('No files selected.');
+                return;
             }
-            // Clear file input
+
+            $.each(files, function(index, file) {
+                if (!filesToUpload.some(f => f.name === file.name)) {
+                    filesToUpload.push(file);
+
+                    let listItem = $('<div>').addClass('file-item');
+                    let fileName = $('<span></span>').addClass('ms-2').text(file.name);
+                    let deleteButton = $('<button></button>').text('Delete').addClass('btn btn-outline-danger btn-sm delete-button');
+
+                    listItem.append(deleteButton);
+                    listItem.append(fileName);
+
+                    $('#fileList').append(listItem);
+                }
+            });
+
             $('#fileInput').val('');
         });
 
         // 파일 삭제 버튼 클릭 시
         $('#fileList').on('click', '.delete-button', function() {
-            let index = $(this).data('index');
-            filesToUpload.splice(index, 1); // 배열에서 파일 제거
+            let fileName = $(this).siblings('span').text();
 
-            $(this).closest('.file-item').remove(); // UI에서 파일 항목 제거
+            filesToUpload = filesToUpload.filter(file => file.name !== fileName);
 
-            // 새로 업데이트된 파일 목록으로 input 요소 설정
-            let dataTransfer = new DataTransfer();
-            filesToUpload.forEach(file => dataTransfer.items.add(file));
-            $('#fileInput')[0].files = dataTransfer.files;
+            $(this).parent().remove();
         });
     })
 
