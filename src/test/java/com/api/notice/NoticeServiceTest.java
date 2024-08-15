@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 class NoticeServiceTest {
 
 
-    private final String LOGINID = "test";
+    private final String LOGIN_ID = "test";
 
     @InjectMocks
     NoticeServiceImpl noticeService;
@@ -50,7 +50,7 @@ class NoticeServiceTest {
         noticeEntity.setNoticeNo(100);
         noticeEntity.setTitle("test_title1");
         noticeEntity.setContent("test_content1");
-        noticeEntity.setCreator(LOGINID);
+        noticeEntity.setCreator(LOGIN_ID);
         noticeEntity.setNoticeStartDate(LocalDateTime.now());
         noticeEntity.setNoticeEndDate(LocalDateTime.of(2022, 12, 31, 3, 2, 4));
         noticeEntity.setCreatedAt(LocalDateTime.now());
@@ -64,7 +64,7 @@ class NoticeServiceTest {
         noticeAttachmentEntity.setFileName("test.jpg");
         noticeAttachmentEntity.setFilePath("/user/home/test.jpg");
         noticeAttachmentEntity.setFileSize(100L);
-        noticeAttachmentEntity.setCreator(LOGINID);
+        noticeAttachmentEntity.setCreator(LOGIN_ID);
         noticeAttachmentEntity.setCreatedAt(LocalDateTime.now());
 
         List<NoticeAttachmentEntity> noticeAttachmentEntityList = new ArrayList<>();
@@ -76,7 +76,7 @@ class NoticeServiceTest {
         noticeEntity2.setNoticeNo(101);
         noticeEntity2.setTitle("test_title2");
         noticeEntity2.setContent("test_content2");
-        noticeEntity2.setCreator(LOGINID);
+        noticeEntity2.setCreator(LOGIN_ID);
         noticeEntity2.setNoticeStartDate(LocalDateTime.now());
         noticeEntity2.setNoticeEndDate(LocalDateTime.of(2022, 12, 31, 3, 2, 4));
         noticeEntityList.add(noticeEntity2);
@@ -129,6 +129,7 @@ class NoticeServiceTest {
         noticeSaveRequest.setContent("test_content3");
         noticeSaveRequest.setNoticeStartDate(LocalDateTime.now());
         noticeSaveRequest.setNoticeEndDate(LocalDateTime.of(2031, 12, 22, 3, 4, 5));
+        noticeSaveRequest.setCreator(LOGIN_ID);
 
         when(noticeRepository.createNotice(any(NoticeSaveRequest.class))).thenReturn(102);
         int noticeNo = noticeService.createNotice(noticeSaveRequest);
@@ -145,6 +146,7 @@ class NoticeServiceTest {
         noticeSaveRequest.setContent("updated_content1");
         noticeSaveRequest.setNoticeStartDate(LocalDateTime.now());
         noticeSaveRequest.setNoticeEndDate(LocalDateTime.of(2031, 12, 22, 3, 4, 5));
+        noticeSaveRequest.setUpdater(LOGIN_ID);
 
         // Mocking repository method
         doNothing().when(noticeRepository).updateNotice(noticeSaveRequest);

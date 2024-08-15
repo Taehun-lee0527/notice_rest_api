@@ -96,7 +96,7 @@ public class NoticeRestController {
 
     @DeleteMapping("/api/notices")
     public void deleteNotices(
-            @RequestBody List<Integer> noticeNoList
+            @RequestParam List<Integer> noticeNoList
     ) throws Exception {
         noticeService.deleteNotices(noticeNoList);
     }

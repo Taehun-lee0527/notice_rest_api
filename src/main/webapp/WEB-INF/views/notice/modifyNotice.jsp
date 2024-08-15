@@ -205,12 +205,10 @@
 
         if (filesToUpload && filesToUpload.length > 0) {
             filesToUpload.forEach(function(file, index) {
-                console.log(file);
                 formData.append("attachmentList", file);
             });
         }
         if (deleteAttachmentList && deleteAttachmentList.length > 0) {
-            console.log(JSON.stringify(deleteAttachmentList))
             formData.append("deleteAttachmentList", JSON.stringify(deleteAttachmentList));
         }
 
@@ -221,18 +219,18 @@
             processData: false, // Prevent jQuery from automatically transforming the data into a query string
             contentType: false, // Prevent jQuery from setting content-type header
         })
-            .done(function(data, textStatus, xhr) {
-                if(textStatus === 'success'){
-                    alert('수정 성공!');
-                    location.href = '/notice/detailNotice/${noticeNo}';
-                }
-            })
-            .fail(function(xhr, textStatus, errorThrown) {
-                console.log(xhr);
-                console.log(textStatus);
-                console.log(errorThrown);
-                alert('에러 발생!!!!' + errorThrown);
-            });
+        .done(function(data, textStatus, xhr) {
+            if(textStatus === 'success'){
+                alert('수정 성공!');
+                location.href = '/notice/detailNotice/${noticeNo}';
+            }
+        })
+        .fail(function(xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
+            alert('에러 발생!!!!' + errorThrown);
+        });
     }
 
     function validation(){

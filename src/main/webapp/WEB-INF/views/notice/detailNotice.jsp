@@ -116,14 +116,6 @@
             alert('Error:'+ textStatus + ',' + errorThrown);
             location.href = '/notice';
         });
-
-        <%--$.post('/api/notices/${noticeNo}/increase-view-count', function(response){--%>
-        <%--    --%>
-        <%--})--%>
-        <%--.fail(function(jqXHR, textStatus, errorThrown) {--%>
-        <%--    alert('Error:'+ textStatus + ',' + errorThrown);--%>
-        <%--    location.href = '/notice';--%>
-        <%--});--%>
     })
 
     function getNoticeDetail(){
@@ -139,13 +131,11 @@
             if(response.attachmentList){
                 for (let i = 0; i < response.attachmentList.length; i++) {
 
-
                     let fileItem = $('<div>').addClass('file-item');
                     let fileName = $('<span>').addClass('ms-2').text(response.attachmentList[i].fileName);
-                    let downloadButton = $('<button>').addClass('btn btn-outline-secondary btn-sm').text("download");
+                    // let downloadButton = $('<button>').addClass('btn btn-outline-secondary btn-sm').text("download");
 
-
-                    fileItem.append(downloadButton).append(fileName);
+                    fileItem.append(fileName);
                     $('#fileList').append(fileItem);
                 }
             }

@@ -42,6 +42,7 @@ class NoticeServiceIntegrationTest {
     private EntityManager entityManager;
 
     private static int NOTICE_NO;
+    private static String LOGIN_ID = "test";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -49,10 +50,9 @@ class NoticeServiceIntegrationTest {
         NoticeSaveRequest noticeEntity = new NoticeSaveRequest();
         noticeEntity.setTitle("test_title1");
         noticeEntity.setContent("test_content1");
-        noticeEntity.setCreator("test");
+        noticeEntity.setCreator(LOGIN_ID);
         noticeEntity.setNoticeStartDate(LocalDateTime.now());
         noticeEntity.setNoticeEndDate(LocalDateTime.of(2022, 12, 31, 3, 2, 4));
-//        noticeEntity.setCreatedAt(LocalDateTime.now());
         NOTICE_NO = noticeRepository.createNotice(noticeEntity);
 
         NoticeAttachmentEntity noticeAttachmentEntity = new NoticeAttachmentEntity();
@@ -61,7 +61,7 @@ class NoticeServiceIntegrationTest {
         noticeAttachmentEntity.setFileName("test.jpg");
         noticeAttachmentEntity.setFilePath("/user/home/test.jpg");
         noticeAttachmentEntity.setFileSize(100L);
-        noticeAttachmentEntity.setCreator("test");
+        noticeAttachmentEntity.setCreator(LOGIN_ID);
         noticeAttachmentEntity.setCreatedAt(LocalDateTime.now());
         noticeAttachmentRepository.save(noticeAttachmentEntity);
     }
@@ -69,8 +69,8 @@ class NoticeServiceIntegrationTest {
     @AfterEach
     void tearDown() {
         // 데이터 정리
-//        noticeRepository.deleteAll();
-//        noticeAttachmentRepository.deleteAll();
+        noticeRepository.deleteAll();
+        noticeAttachmentRepository.deleteAll();
     }
 
     @Test
@@ -107,11 +107,11 @@ class NoticeServiceIntegrationTest {
     @DisplayName("공지사항 추가")
     void create() throws Exception {
         NoticeSaveRequest noticeSaveRequest = new NoticeSaveRequest();
-//        noticeSaveRequest.setNoticeNo(102);
         noticeSaveRequest.setTitle("test_title2");
         noticeSaveRequest.setContent("test_content2");
         noticeSaveRequest.setNoticeStartDate(LocalDateTime.now());
         noticeSaveRequest.setNoticeEndDate(LocalDateTime.of(2031, 12, 22, 3, 4, 5));
+        noticeSaveRequest.setCreator(LOGIN_ID);
 
         int noticeNo = noticeService.createNotice(noticeSaveRequest);
         NoticeDetailResponse noticeDetailResponse = noticeService.getNotice(noticeNo);
@@ -132,6 +132,7 @@ class NoticeServiceIntegrationTest {
         noticeSaveRequest.setContent("updated_content2");
         noticeSaveRequest.setNoticeStartDate(LocalDateTime.now());
         noticeSaveRequest.setNoticeEndDate(LocalDateTime.of(2031, 12, 22, 3, 4, 5));
+        noticeSaveRequest.setUpdater(LOGIN_ID);
 
         noticeService.updateNotice(noticeSaveRequest);
 

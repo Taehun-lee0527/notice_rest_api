@@ -134,21 +134,44 @@
                 return false;
             }
 
+            let noticeNoList = [];
+            checkedRows.forEach(function(row){
+                noticeNoList.push(row.noticeNo);
+            });
+
+            const queryString = $.param({ noticeNoList: noticeNoList });
+
             $.ajax({
-                url: `/api/notices`, // 실제 API URL
-                method: 'DELETE',
-                data: { page: 1, perPage:20, searchType:$('#searchType').val(), searchText:$('#searchText').val() }, // 검색어를 쿼리 파라미터로 전달
-                dataType: 'json',
-                success: function (response) {
+                url: `/api/notices?`+queryString, // 실제 API URL
+                method: 'DELETE'
+            })
+            .done(function(data, textStatus, xhr) {
+                if(textStatus === 'success'){
+                    alert('삭제 성공!');
+                    $.ajax({
+                        url: `/api/notices`, // 실제 API URL
+                        method: 'GET',
+                        data: { page: 1, perPage:20, searchType:$('#searchType').val(), searchText:$('#searchText').val() }, // 검색어를 쿼리 파라미터로 전달
+                        dataType: 'json',
+                        success: function (response) {
 
-                    const pageState = { page: 1, totalCount: response.data.pagination.totalCount, perPage: 20 };
+                            const pageState = { page: 1, totalCount: response.data.pagination.totalCount, perPage: 20 };
 
-                    const data = response.data.contents || [];
-                    grid.resetData(data, {pageState});
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error fetching data:', error);
+                            const data = response.data.contents || [];
+
+                            grid.resetData(data, {pageState});
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error fetching data:', error);
+                        }
+                    });
                 }
+            })
+            .fail(function(xhr, textStatus, errorThrown) {
+                console.log(xhr);
+                console.log(textStatus);
+                console.log(errorThrown);
+                alert('에러 발생!!!!' + errorThrown);
             });
         })
     })
