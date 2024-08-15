@@ -36,3 +36,9 @@ create table if not exists notice_attachment
     updated_at timestamp,
     foreign key (notice_no) references notice(notice_no) on delete cascade
 );
+
+CREATE INDEX idx_notice_created_at ON notice.notice(created_at desc);
+CREATE INDEX idx_notice_creator_created_at ON notice.notice(creator, created_at desc);
+CREATE INDEX idx_notice_title_created_at ON notice.notice(title, created_at desc);
+CREATE INDEX idx_notice_content_created_at ON notice.notice(content, created_at desc);
+CREATE INDEX idx_notice_title_content_created_at ON notice.notice(title, content, created_at desc);
