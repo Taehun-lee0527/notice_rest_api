@@ -21,17 +21,17 @@
   ```
 * mysql 설치
   ```
-    - brew install mysql
-    - mysql --version
-    - mysql.server start
+  - brew install mysql
+  - mysql --version
+  - mysql.server start
   ```
   * mysql workbench 설치 <https://dev.mysql.com/downloads/workbench/>
   * 필요한 테이블은 /src/test/resources/schema.sql 참고
 * redis 설치
-```
-    - brew install redis
-    - redis-server
-```
+  ```
+  - brew install redis
+  - redis-server
+  ```
 
 ---
 ## 회원 가입 및 진행 방법
@@ -54,19 +54,19 @@
 * redis 캐시 사용
  * serviceImpl에서 @Cacheable을 사용하여 공지사항 목록 조회 시 redis에 캐시 저장 
   ```
-    @CacheEvict(value = "noticeList", allEntries = true)
+  @CacheEvict(value = "noticeList", allEntries = true)
   ```
  * 등록, 수정, 삭제 실행 시 위 코드의 @CacheEvict 어노테이션을 활용해서 캐시 초기화 진행
 * database index 활용
  * 자주 사용하는 컬럼에 index를 활용합니다.
  * 이번 프로젝트에서는 공지사항을 최신순으로 보여준다는 가정 하에 created_at desc를 중심으로 검색 조건인 제목, 내용, 제목 + 내용 인덱스 생성
-```
-CREATE INDEX idx_notice_created_at ON notice.notice(created_at desc);
-CREATE INDEX idx_notice_creator_created_at ON notice.notice(creator, created_at desc);
-CREATE INDEX idx_notice_title_created_at ON notice.notice(title, created_at desc);
-CREATE INDEX idx_notice_content_created_at ON notice.notice(content, created_at desc);
-CREATE INDEX idx_notice_title_content_created_at ON notice.notice(title, content, created_at desc);
-```
+  ```
+  CREATE INDEX idx_notice_created_at ON notice.notice(created_at desc);
+  CREATE INDEX idx_notice_creator_created_at ON notice.notice(creator, created_at desc);
+  CREATE INDEX idx_notice_title_created_at ON notice.notice(title, created_at desc);
+  CREATE INDEX idx_notice_content_created_at ON notice.notice(content, created_at desc);
+  CREATE INDEX idx_notice_title_content_created_at ON notice.notice(title, content, created_at desc);
+  ```
 ### 기타 고려사항 및 구현내용
 * 첨부파일 등록 시 originalFileName()을 사용하는 경우, 서버에 업로드 될 때 중복이 발생할 수 있으므로 UUID를 사용하여 고유한 파일명 생성
 * 공지사항 삭제 시 첨부파일도 삭제되어야 하므로 DB에서는 notice_attachment 테이블에 foreign key (notice_no) references notice(notice_no) on delete cascade를 사용하였고, 실제 파일은 파일 삭제 로직을 따로 구현
