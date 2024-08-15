@@ -16,19 +16,21 @@
 * mac brew 설치
   * <https://brew.sh/ko/>
 * openJDK 설치
-  * brew install openjdk@17
+  ```
+  - brew install openjdk@17
+  ```
 * mysql 설치
   ```
-    brew install mysql
-    mysql --version
-    mysql.server start
+    - brew install mysql
+    - mysql --version
+    - mysql.server start
   ```
   * mysql workbench 설치 <https://dev.mysql.com/downloads/workbench/>
   * 필요한 테이블은 /src/test/resources/schema.sql 참고
 * redis 설치
 ```
-    brew install redis
-    redis-server
+    - brew install redis
+    - redis-server
 ```
 
 ---
